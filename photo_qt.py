@@ -18,7 +18,7 @@ main_window.setWindowTitle("PhotQt")
 main_window.resize(900, 600)
 
 # WIdgets/Objects
-btn_folder = QPushButton("Folder")
+btn_folder = QPushButton("Select Folder")
 
 file_list = QListWidget()
 
