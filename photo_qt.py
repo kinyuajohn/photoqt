@@ -1,5 +1,6 @@
 # import modules
 import os
+
 from PyQt5.QtWidgets import (
     QApplication,
     QWidget,
@@ -13,6 +14,8 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
+
+from PIL import Image, ImageFilter, ImageEnhance
 
 # Settings
 app = QApplication([])
@@ -99,7 +102,47 @@ def getWorkDirectory():
         file_list.addItem(filename)
 
 
+class Editor:
+    def __init__(self):
+        self.image = None
+        self.original = None
+        self.filename = None
+        self.save_folder = "edits/"
+
+    def load_image(self, filename):
+        self.filename = filename
+        fullname = os.path.join(working_directory, self.filename)
+        self.image = Image.open(fullname)
+        self.original = self.image.copy()
+
+    def save_image(self):
+        path = os.path.join(working_directory, self.save_folder)
+        if not (os.path.exists(path) or os.path.isdir(path)):
+            os.mkdir(path)
+
+        fullname = os.path.join(path, self.filename)
+        self.image.save(fullname)
+
+    def show_image(self, path):
+        picture_box.hide()
+        image = QPixmap(path)
+        w, h = picture_box.width(), picture_box.height()
+        image = image.scaled(w, h, Qt.KeepAspectRatio)
+        picture_box.setPixmap(image)
+        picture_box.show()
+
+
+def displayImage():
+    if file_list.currentRow() >= 0:
+        filename = file_list.currentItem().text()
+        main.load_image(filename)
+        main.show_image(os.path.join(working_directory, main.filename))
+
+
+main = Editor()
+
 btn_folder.clicked.connect(getWorkDirectory)
+file_list.currentRowChanged.connect(displayImage)
 
 # Run/Show
 main_window.show()
